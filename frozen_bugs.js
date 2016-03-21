@@ -44,10 +44,11 @@ function buyMeatTwin(unit) {
 
     if (unit.maxCostMet(1).times(unit.twinMult()).greaterThan(totalUnitCost.times(1.5))) {
       if (!twin.isBuyable()) {
-        console.log('Buying ', totalUnitCost.minus(unit.count()).toExponential(2), unit.unittype.slug);
         if (unit.count().lessThan(totalUnitCost)) {
           unit.buy(unitCost.times(parentCost).minus(unit.count()));
+          console.log('Twinning-Bought', totalUnitCost.minus(unit.count()).toExponential(2), unit.unittype.slug);
         }
+        console.log('Twinning-Bought', parentCost.toExponential(2), parent.unittype.slug);
         parent.buy(parentCost);
       }
       if (twin.isBuyable()) {
@@ -75,8 +76,9 @@ function unitCostAsPercentOfVelocity (unit, cost) {
   return Decimal.min(MAX, cost.val.times(unit.maxCostMetOfVelocity()).dividedBy(count));
 }
 
-var buyList = units.larva.upgrades.list.concat(units.nexus.upgrades.list);
 // var buyList = [game.upgrade('expansion')].concat(units.nexus.upgrades.list);
+var buyList = units.larva.upgrades.list.concat(units.nexus.upgrades.list);
+buyList = buyList.concat(_.flatten(units.territory._parents().map(function(p){return p.upgrades.list})));
 
 var buyFunc = function() {
   var currMeat = currentMeat(units.drone);
