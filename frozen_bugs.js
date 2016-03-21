@@ -45,8 +45,8 @@ function buyMeatTwin(unit) {
     if (unit.maxCostMet(1).times(unit.twinMult()).greaterThan(totalUnitCost.times(1.5))) {
       if (!twin.isBuyable()) {
         if (unit.count().lessThan(totalUnitCost)) {
-          unit.buy(unitCost.times(parentCost).minus(unit.count()));
           console.log('Twinning-Bought', totalUnitCost.minus(unit.count()).toExponential(2), unit.unittype.slug);
+          unit.buy(unitCost.times(parentCost).minus(unit.count()));
         }
         console.log('Twinning-Bought', parentCost.toExponential(2), parent.unittype.slug);
         parent.buy(parentCost);
