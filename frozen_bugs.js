@@ -6,6 +6,11 @@ var buyTerr = true;
 var autobuy = 0;
 var fasterUpgrades = [];
 
+var autoSpeed = 10000;
+var mothN4 = 2013;
+var mothEnd = 5546;
+var batCount = 393;
+
 game.unitlist().forEach(function(u) {
   var upgrade = u.upgrades.byName[u.name + 'prod'];
   if (upgrade != null) {
@@ -76,5 +81,26 @@ var buyFunc = function() {
 	  }, 2000)
 	}
   });
-  autobuy = setTimeout(buyFunc, 10000);
+  autobuy = setTimeout(buyFunc, autoSpeed);
+};
+
+var autoEnergy = 0;
+var autoEnergyF = function() {
+  buyList = units.larva.upgrades.list.concat(units.nexus.upgrades.list);
+  // buyList = [game.upgrade('expansion')].concat(units.nexus.upgrades.list);
+  if (units.moth.count().toNumber >= mothN4) {
+    if (game.upgrade('nexus5').count().toNumber() == 0) {
+      buyList = buyList.concat(game.upgrade('nexus5'));
+    } else if (units.moth.count().toNumber() < mothEnd) {
+      buyList = buyList.concat(units.moth);
+    } else if (units.bat.count().toNumber() < batCount) {
+      buyList = buyList.concat(units.bat);
+    } else {
+      return 0;
+    }
+  } else {
+    buyList = buyList.concat(units.moth);
+  }
+  
+  autoEnergy = setTimeout(autoEnergyF, autoSpeed);
 };
