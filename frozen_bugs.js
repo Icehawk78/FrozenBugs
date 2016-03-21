@@ -119,7 +119,7 @@ var autoEnergy = 0;
 var autoEnergyF = function() {
   buyList = units.larva.upgrades.list.concat(units.nexus.upgrades.list);
   // buyList = [game.upgrade('expansion')].concat(units.nexus.upgrades.list);
-  if (units.moth.count().toNumber >= mothN4) {
+  if (units.moth.count().toNumber() >= mothN4) {
     if (game.upgrade('nexus5').count().toNumber() == 0) {
       buyList = buyList.concat(game.upgrade('nexus5'));
     } else if (units.moth.count().toNumber() < mothEnd) {
