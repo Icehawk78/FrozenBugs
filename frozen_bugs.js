@@ -38,23 +38,27 @@ function buyMeatTwin(unit) {
   var twin = game.upgrade(unit.name + 'twin');
   if (twin) {
     var parentCost = twin.totalCost()[0].val;
-	var parent = twin.totalCost()[0].unit;
-	var unitCost = parent.costByName[unit.name].val.dividedBy(parent.twinMult());
-	if (unit.maxCostMet(1).times(unit.twinMult()).greaterThan(unitCost.times(parentCost).times(1.5))) {
-	  if (!twin.isBuyable()) {
-	    console.log('Buying ', unitCost.minus(unit.count()).toExponential(2), unit.unittype.slug);
-	    unit.buy(unitCost.minus(unit.count()));
-		parent.buy(parentCost);
-	  }
-	  if (twin.isBuyable()) {
-	    twin.buy(1);
-	    console.log('Bought Twin', unit.unittype.slug);
-	    buyMeatTwin(unit);
-	  }
-	} else {
-	  console.log('Bought', unit.maxCostMet(1).times(unit.twinMult()).toExponential(2), unit.unittype.slug);
-	  unit.buyMax(1);
-	}
+    var parent = twin.totalCost()[0].unit;
+    var unitCost = parent.costByName[unit.name].val.dividedBy(parent.twinMult());
+    var totalUnitCost = unitCost.times(parentCost);
+
+    if (unit.maxCostMet(1).times(unit.twinMult()).greaterThan(totalUnitCost.times(1.5))) {
+      if (!twin.isBuyable()) {
+        console.log('Buying ', totalUnitCost.minus(unit.count()).toExponential(2), unit.unittype.slug);
+        if (unit.count().lessThan(totalUnitCost)) {
+          unit.buy(unitCost.times(parentCost).minus(unit.count()));
+        }
+        parent.buy(parentCost);
+      }
+      if (twin.isBuyable()) {
+        twin.buy(1);
+        console.log('Bought Twin', unit.unittype.slug);
+        buyMeatTwin(unit);
+      }
+    } else {
+      console.log('Bought', unit.maxCostMet(1).times(unit.twinMult()).toExponential(2), unit.unittype.slug);
+      unit.buyMax(1);
+    }
   }
 }
 
