@@ -34,6 +34,30 @@ function currentMeat(unit) {
   }
 }
 
+function buyMeatTwin(unit) {
+  var twin = game.upgrade(unit.name + 'twin');
+  if (twin) {
+    var parentCost = twin.totalCost()[0].val;
+	var parent = twin.totalCost()[0].unit;
+	var unitCost = parent.costByName[unit.name].val.dividedBy(parent.twinMult());
+	if (unit.maxCostMet(1).times(unit.twinMult()).greaterThan(unitCost.times(parentCost).times(1.5))) {
+	  if (!twin.isBuyable()) {
+	    console.log('Buying ', unitCost.minus(unit.count()).toExponential(2), unit.unittype.slug);
+	    unit.buy(unitCost.minus(unit.count()));
+		parent.buy(parentCost);
+	  }
+	  if (twin.isBuyable()) {
+	    twin.buy(1);
+	    console.log('Bought Twin', unit.unittype.slug);
+	    buyMeatTwin(unit);
+	  }
+	} else {
+	  console.log('Bought', unit.maxCostMet(1).times(unit.twinMult()).toExponential(2), unit.unittype.slug);
+	  unit.buyMax(1);
+	}
+  }
+}
+
 function currentTerritory() {
   return _.max(units.territory._parents(), function(u) {return u.maxCostMet(1).times(u.twinMult()).times(u.eachProduction().territory).toNumber()});
 }
@@ -57,11 +81,13 @@ var buyFunc = function() {
   
   buyList.forEach(function(u) {
     if (u.isBuyable()) {
+      console.log('Bought', u.maxCostMet(1).toNumber(), u.name);
       u.buyMax(1);
     }
   });
   fasterUpgrades.forEach(function(u) {
     if (u.isBuyable && u.totalCost()[0].val.times(2).lessThan(u.totalCost()[0].unit.count())) {
+    	  console.log('Bought', u.maxCostMet(1).toNumber(), u.name);
 	  u.buyMax(1);
 	}
   });
@@ -76,8 +102,7 @@ var buyFunc = function() {
   meatList.forEach(function(m) {
     if (buyMeat && m.isBuyable()) {
 	  setTimeout(function() {
-	    console.log('Bought', m.maxCostMet(1).times(m.twinMult()).toExponential(2), m.unittype.slug);
-		m.buyMax(1);
+	    buyMeatTwin(m);
 	  }, 2000)
 	}
   });
