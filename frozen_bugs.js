@@ -81,10 +81,6 @@ var buyList = units.larva.upgrades.list.concat(units.nexus.upgrades.list);
 buyList = buyList.concat(_.flatten(units.territory._parents().map(function(p){return p.upgrades.list})));
 
 var buyFunc = function() {
-  var currMeat = currentMeat(units.drone);
-  var meatList = unitRatio(currMeat) > 0.01 ? [currMeat.next, currMeat] : [currMeat];
-  var currTerr = currentTerritory();
-  
   buyList.forEach(function(u) {
     if (u.isBuyable()) {
       console.log('Bought', u.maxCostMet(1).toNumber(), u.name);
@@ -98,6 +94,8 @@ var buyFunc = function() {
 	}
   });
   
+  var currTerr = currentTerritory();
+  
   if (buyTerr && currTerr.isBuyable()) {
     setTimeout(function() {
 	  console.log('Bought', currTerr.maxCostMet(1).times(currTerr.twinMult()).toExponential(2), currTerr.unittype.slug);
@@ -105,12 +103,15 @@ var buyFunc = function() {
 	}, 1000);
   }
   
+  var currMeat = currentMeat(units.drone);
+  var meatList = unitRatio(currMeat) > 0.01 ? [currMeat.next, currMeat] : [currMeat];
+  
   meatList.forEach(function(m) {
     if (buyMeat && m.isBuyable()) {
-	  setTimeout(function() {
-	    buyMeatTwin(m);
-	  }, 2000)
-	}
+      setTimeout(function() {
+        buyMeatTwin(m);
+      }, 2000)
+    }
   });
   autobuy = setTimeout(buyFunc, autoSpeed);
 };
