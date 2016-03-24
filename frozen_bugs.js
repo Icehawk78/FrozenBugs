@@ -77,8 +77,7 @@ function unitCostAsPercentOfVelocity (unit, cost) {
 }
 
 // var buyList = [game.upgrade('expansion')].concat(units.nexus.upgrades.list);
-var buyList = units.larva.upgrades.list.concat(units.nexus.upgrades.list);
-buyList = buyList.concat(_.flatten(units.territory._parents().map(function(p){return p.upgrades.list})));
+var buyList = units.larva.upgrades.list.concat(units.nexus.upgrades.list).concat(units.meat.upgrades.list).concat(_.flatten(units.territory._parents().map(function(p){return p.upgrades.list})));
 
 var buyFunc = function() {
   buyList.forEach(function(u) {
@@ -118,7 +117,7 @@ var buyFunc = function() {
 
 var autoEnergy = 0;
 var autoEnergyF = function() {
-  buyList = units.larva.upgrades.list.concat(units.nexus.upgrades.list);
+  buyList = units.larva.upgrades.list.concat(units.nexus.upgrades.list).concat(units.meat.upgrades.list).concat(_.flatten(units.territory._parents().map(function(p){return p.upgrades.list})));
   // buyList = [game.upgrade('expansion')].concat(units.nexus.upgrades.list);
   if (units.moth.count().toNumber() >= mothN4) {
     if (game.upgrade('nexus5').count().toNumber() == 0) {
