@@ -18,6 +18,8 @@ game.unitlist().forEach(function(u) {
   }
 });
 
+var empowerList = units.territory._parents().map(function(u) {return game.upgrade(u.name + 'empower')});
+
 function unitRatio(u) {
   if (u._producerPath.getCoefficients().length > 1) {
     return u._producerPath.getCoefficientsNow()[1].dividedBy(u.maxCostMetOfVelocity().times(u.twinMult())).toNumber();
@@ -88,10 +90,16 @@ var buyFunc = function() {
     }
   });
   fasterUpgrades.forEach(function(u) {
-    if (u.isBuyable && u.totalCost()[0].val.times(2).lessThan(u.totalCost()[0].unit.count())) {
-    	  console.log('Bought', u.maxCostMet(1).toNumber(), u.name);
-	  u.buyMax(1);
-	}
+    if (u.isBuyable() && u.totalCost()[0].val.times(2).lessThan(u.totalCost()[0].unit.count())) {
+      console.log('Bought Faster', u.unit.unittype.slug, u.maxCostMet(1).toNumber(), 'times');
+      u.buyMax(1);
+    }
+  });
+  empowerList.forEach(function(u) {
+    if (u.isBuyable() && u.unit.totalProduction().territory.times(1000).lessThan(units.territory.velocity())) {
+      console.log('Bought Empower', u.unit.unittype.slug);
+      u.buy(1);
+    }
   });
   
   var currTerr = currentTerritory();
