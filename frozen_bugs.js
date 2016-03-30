@@ -66,7 +66,16 @@ function buyMeatTwin(unit) {
 }
 
 function currentTerritory() {
-  return _.max(units.territory._parents(), function(u) {return u.maxCostMet(1).times(u.twinMult()).times(u.eachProduction().territory).toNumber()});
+  current = null;
+  currentProd = 0;
+  units.territory._parents().forEach(function(u) {
+    uProd = u.maxCostMet(1).times(u.twinMult()).times(u.eachProduction().territory);
+    if (uProd.greaterThan(currentProd)) {
+      currentProd = uProd;
+      current = u;
+    }
+  });
+  return current;
 }
 
 function unitCostAsPercentOfVelocity (unit, cost) {
@@ -99,7 +108,7 @@ var buyFunc = function() {
   var currTerr = currentTerritory();
   
   empowerList.forEach(function(u) {
-    if (u.isBuyable() && currTerr.costByName.meat.lessThan(u.unit.costByName.meat) && u.unit.totalProduction().territory.times(1000).lessThan(units.territory.velocity())) {
+    if (u.isBuyable() && currTerr.costByName.meat.val.greaterThan(u.unit.costByName.meat.val) && u.unit.totalProduction().territory.times(1000).lessThan(units.territory.velocity())) {
       console.log('Bought Empower', u.unit.unittype.slug);
       u.buy(1);
     }
