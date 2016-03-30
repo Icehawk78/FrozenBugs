@@ -95,14 +95,17 @@ var buyFunc = function() {
       u.buyMax(1);
     }
   });
+  
+  var currTerr = currentTerritory();
+  
   empowerList.forEach(function(u) {
-    if (u.isBuyable() && u.unit.totalProduction().territory.times(1000).lessThan(units.territory.velocity())) {
+    if (u.isBuyable() && currTerr.costByName.meat.lessThan(u.unit.costByName.meat) && u.unit.totalProduction().territory.times(1000).lessThan(units.territory.velocity())) {
       console.log('Bought Empower', u.unit.unittype.slug);
       u.buy(1);
     }
   });
   
-  var currTerr = currentTerritory();
+  currTerr = currentTerritory();
   
   if (buyTerr && currTerr.isBuyable()) {
     setTimeout(function() {
