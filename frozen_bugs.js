@@ -108,7 +108,7 @@ var buyFunc = function() {
   var currTerr = currentTerritory();
   
   empowerList.forEach(function(u) {
-    if (u.isBuyable() && currTerr.costByName.meat.val.greaterThan(u.unit.costByName.meat.val) && u.unit.totalProduction().territory.times(1000).lessThan(units.territory.velocity())) {
+    if (u.isBuyable() && currTerr.eachCost()[0].val.greaterThan(u.unit.eachCost()[0].val) && u.unit.totalProduction().territory.times(1000).lessThan(units.territory.velocity())) {
       console.log('Bought Empower', u.unit.unittype.slug);
       u.buy(1);
     }
