@@ -66,7 +66,7 @@ function buyMeatTwin(unit) {
 }
 
 function currentTerritory() {
-  var current = null;
+  var current = units.swarmling;
   var currentProd = 0;
   units.territory._parents().forEach(function(u) {
     var uProd = u.maxCostMet(1).times(u.twinMult()).times(u.eachProduction().territory);
