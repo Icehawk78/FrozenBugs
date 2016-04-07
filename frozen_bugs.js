@@ -36,31 +36,32 @@ function currentMeat(unit) {
   }
 }
 
-function buyMeatTwin(unit) {
+function buyMeatTwin(unit, amount) {
   var twin = game.upgrade(unit.name + 'twin');
+  var realAmount = amount == 0 ? unit.maxCostMet(1).times(unit.twinMult()) : amount;
   if (twin) {
     var parentCost = twin.totalCost()[0].val;
     var parent = twin.totalCost()[0].unit;
     var unitCost = parent.costByName[unit.name].val.dividedBy(parent.twinMult());
     var totalUnitCost = unitCost.times(parentCost);
 
-    if (unit.maxCostMet(1).times(unit.twinMult()).greaterThan(totalUnitCost.times(1.5))) {
+    if (totalUnitCost.times(1.5).lessThan(realAmount)) {
       if (!twin.isBuyable()) {
         if (unit.count().lessThan(totalUnitCost)) {
           console.log('Twinning-Bought', totalUnitCost.minus(unit.count()).toExponential(2), unit.unittype.slug);
           unit.buy(unitCost.times(parentCost).minus(unit.count()));
         }
         console.log('Twinning-Bought', parentCost.toExponential(2), parent.unittype.slug);
-        parent.buy(parentCost);
+        buyMeatTwin(parent, parentCost);
       }
       if (twin.isBuyable()) {
         twin.buy(1);
         console.log('Bought Twin', unit.unittype.slug);
-        buyMeatTwin(unit);
+        buyMeatTwin(unit, amount);
       }
     } else {
-      console.log('Bought', unit.maxCostMet(1).times(unit.twinMult()).toExponential(2), unit.unittype.slug);
-      unit.buyMax(1);
+      console.log('Bought', realAmount.toExponential(2), unit.unittype.slug);
+      unit.buy(realAmount);
     }
   }
 }
@@ -129,7 +130,7 @@ var buyFunc = function() {
   meatList.forEach(function(m) {
     if (buyMeat && m.isBuyable()) {
       setTimeout(function() {
-        buyMeatTwin(m);
+        buyMeatTwin(m, 0);
       }, 2000)
     }
   });
