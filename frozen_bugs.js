@@ -40,7 +40,7 @@ function currentMeat(unit) {
 function buyMeatTwin(unit, amount) {
   var twin = game.upgrade(unit.name + 'twin');
   var realAmount = amount == 0 ? unit.maxCostMet(1).times(unit.twinMult()) : amount;
-  if (twin) {
+  if (twin && unit.next) {
     var parentCost = twin.totalCost()[0].val;
     var parent = twin.totalCost()[0].unit;
     var unitCost = parent.costByName[unit.name].val.dividedBy(parent.twinMult());
@@ -64,6 +64,9 @@ function buyMeatTwin(unit, amount) {
       console.log('Bought', realAmount.toExponential(2), unit.unittype.slug);
       unit.buy(realAmount);
     }
+  } else {
+    console.log('Bought', realAmount.toExponential(2), unit.unittype.slug);
+    unit.buy(realAmount);
   }
 }
 
