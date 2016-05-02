@@ -3,6 +3,7 @@ var game = scope.game;
 var units = game.units();
 var buyMeat = true;
 var buyTerr = true;
+var buyEnergy = true;
 var autobuy = 0;
 var fasterUpgrades = [];
 
@@ -93,6 +94,10 @@ var buyListProto = _.flatten([units.larva.upgrades.list, units.nexus.upgrades.li
 var buyList = buyListProto.slice(0);
 
 var buyFunc = function() {
+  if (buyEnergy) {
+    autoEnergy();
+  }
+  
   buyList.forEach(function(u) {
     if (u.isBuyable()) {
       console.log('Bought', u.maxCostMet(1).toNumber(), u.name);
@@ -137,8 +142,7 @@ var buyFunc = function() {
   autobuy = setTimeout(buyFunc, autoSpeed);
 };
 
-var autoEnergy = 0;
-var autoEnergyF = function() {
+var autoEnergy = function() {
   buyList = buyListProto.slice(0);
   if (units.moth.count().toNumber() >= mothN4) {
     if (game.upgrade('nexus5').count().toNumber() == 0) {
@@ -147,12 +151,13 @@ var autoEnergyF = function() {
       buyList = buyList.concat(units.moth);
     } else if (units.bat.count().toNumber() < batCount) {
       buyList = buyList.concat(units.bat);
+    } else if (game.ascendCost().gt(units.energy._getCap())) {
+      buyList.unshift(game.upgrade('swarmwarp'));
     } else {
+      // Add ascension?
       return 0;
     }
   } else {
     buyList = buyList.concat(units.moth);
   }
-  
-  autoEnergy = setTimeout(autoEnergyF, autoSpeed);
 };
